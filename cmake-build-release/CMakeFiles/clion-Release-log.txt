@@ -1,31 +1,7 @@
 "C:\Program Files\JetBrains\CLion 2025.1.1\bin\cmake\win\x64\bin\cmake.exe" -DCMAKE_BUILD_TYPE=Release "-DCMAKE_MAKE_PROGRAM=C:/Program Files/JetBrains/CLion 2025.1.1/bin/ninja/win/x64/ninja.exe" -G Ninja -S C:\Users\anton\CLionProjects\3DRenderer -B C:\Users\anton\CLionProjects\3DRenderer\cmake-build-release
--- The C compiler identification is GNU 13.1.0
--- The CXX compiler identification is GNU 13.1.0
--- Detecting C compiler ABI info
--- Detecting C compiler ABI info - done
--- Check for working C compiler: C:/Program Files/JetBrains/CLion 2025.1.1/bin/mingw/bin/gcc.exe - skipped
--- Detecting C compile features
--- Detecting C compile features - done
--- Detecting CXX compiler ABI info
--- Detecting CXX compiler ABI info - done
--- Check for working CXX compiler: C:/Program Files/JetBrains/CLion 2025.1.1/bin/mingw/bin/g++.exe - skipped
--- Detecting CXX compile features
--- Detecting CXX compile features - done
-Cloning into 'glfw-src'...
-branch 'latest' set up to track 'origin/latest'.
-Switched to a new branch 'latest'
--- Performing Test CMAKE_HAVE_LIBC_PTHREAD
--- Performing Test CMAKE_HAVE_LIBC_PTHREAD - Success
--- Found Threads: TRUE
 -- Including Win32 support
--- Looking for dinput.h
--- Looking for dinput.h - found
--- Looking for xinput.h
--- Looking for xinput.h - found
 -- Could NOT find Doxygen (missing: DOXYGEN_EXECUTABLE) 
 -- Documentation generation requires Doxygen 1.9.8 or later
-Cloning into 'glm-src'...
-HEAD is now at bf71a834 Updated release date
 CMake Deprecation Warning at cmake-build-release/_deps/glm-src/CMakeLists.txt:1 (cmake_minimum_required):
   Compatibility with CMake < 3.10 will be removed from a future version of
   CMake.
@@ -44,11 +20,6 @@ CMake Deprecation Warning at cmake-build-release/_deps/glm-src/CMakeLists.txt:2 
   to work with policies introduced by <max> or earlier.
 
 
-Cloning into 'stb-src'...
-Your branch is up to date with 'origin/master'.
-Already on 'master'
-Cloning into 'assimp-src'...
-HEAD is now at 1c4a8e901 Update doxygen documentation. Drop custom stylesheet.
 CMake Deprecation Warning at cmake-build-release/_deps/assimp-src/CMakeLists.txt:1 (cmake_minimum_required):
   Compatibility with CMake < 3.10 will be removed from a future version of
   CMake.
@@ -83,18 +54,6 @@ CMake Warning (dev) at cmake-build-release/_deps/assimp-src/contrib/zlib/CMakeLi
     PROJECT_VERSION
 This warning is for project developers.  Use -Wno-dev to suppress it.
 
--- Looking for sys/types.h
--- Looking for sys/types.h - found
--- Looking for stdint.h
--- Looking for stdint.h - found
--- Looking for stddef.h
--- Looking for stddef.h - found
--- Check size of off64_t
--- Check size of off64_t - done
--- Looking for fseeko
--- Looking for fseeko - found
--- Looking for unistd.h
--- Looking for unistd.h - found
 CMake Deprecation Warning at cmake-build-release/_deps/assimp-src/code/CMakeLists.txt:7 (cmake_minimum_required):
   Compatibility with CMake < 3.10 will be removed from a future version of
   CMake.
@@ -104,13 +63,7 @@ CMake Deprecation Warning at cmake-build-release/_deps/assimp-src/code/CMakeList
   to work with policies introduced by <max> or earlier.
 
 
-Cloning into 'imguifiledialog-src'...
-Your branch is up to date with 'origin/master'.
-Already on 'master'
-Cloning into 'nlohmann_json-src'...
-HEAD is now at 9cca280a JSON for Modern C++ 3.11.3 (#4222)
 -- Using the multi-header code from C:/Users/anton/CLionProjects/3DRenderer/cmake-build-release/_deps/nlohmann_json-src/include/
--- Found OpenGL: opengl32
--- Configuring done (124.8s)
--- Generating done (0.4s)
+-- Configuring done (0.7s)
+-- Generating done (0.2s)
 -- Build files have been written to: C:/Users/anton/CLionProjects/3DRenderer/cmake-build-release

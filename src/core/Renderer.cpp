@@ -208,20 +208,14 @@ void Renderer::RenderMeshes() {
     }
 }
 
+void Renderer::InitializeGrid() {
+    grid = std::make_unique<Grid>();
+}
+
 void Renderer::RenderGrid(float aspect) {
-    gridShader->Use();
-
-    // ViewUniforms setzen (siehe Shader)
-    gridShader->SetMat4("view.view", camera.GetViewMatrix());
-    gridShader->SetMat4("view.proj", camera.GetProjectionMatrix(aspect));
-    gridShader->SetVec3("view.pos", camera.position);
-
-    // Model-Matrix für das Plane
-    glm::mat4 model = ComputeModelMatrix(*gridPlane);
-    gridShader->SetMat4("model", model);
-
-    // Plane-Mesh zeichnen
-    gridPlane->GetMesh()->DrawInstanced(*gridShader);
+    if (grid) {
+        grid->Render(camera, aspect);
+    }
 }
 
 void Renderer::Render() {
@@ -248,6 +242,7 @@ void Renderer::Render() {
         SetMaterials();
         SetLighting(*shader);
         RenderMeshes();
+        RenderGrid(aspect);
 
         glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
         glBindFramebuffer(GL_FRAMEBUFFER, 0);
@@ -255,7 +250,10 @@ void Renderer::Render() {
         UpdateMeshCache();
 
         ui.BeginFrame();
-        ui.DrawViewport(viewportTexture, viewportWidth, viewportHeight, scene);
+
+        ViewportRect rect = ui.DrawViewport(viewportTexture, viewportWidth, viewportHeight, scene);
+        ui.DrawAxisGizmo(camera.GetViewMatrix(), rect.pos, rect.size);
+
         ui.Draw(cachedMeshes, scene);
         ui.EndFrame();
 

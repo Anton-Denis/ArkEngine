@@ -11,6 +11,12 @@
 #include "../objects/DirectionalLight.hpp"
 #include "../core/Window.hpp"
 #include "../core/ProjectManager.hpp"
+#include "../core/AxisGizmo.hpp"
+
+struct ViewportRect {
+    ImVec2 pos;  // absolute top-left of the image
+    ImVec2 size; // image size in pixels
+};
 
 class UI {
 public:
@@ -20,7 +26,8 @@ public:
     void BeginFrame();
     void EndFrame();
     void Draw(const std::vector<Mesh*>& meshes, Scene& scene);
-    ImVec2 DrawViewport(GLuint texture, int texWidth, int texHeight, Scene& scene);
+    ViewportRect DrawViewport(GLuint texture, int texWidth, int texHeight, Scene& scene);
+    void DrawAxisGizmo(const glm::mat4& viewMatrix, ImVec2 imageAbsPos, ImVec2 imageSize);
 
     void DrawDirectoryTree();
     void DrawFileBrowser(Scene& scene);
@@ -44,6 +51,8 @@ private:
     static std::vector<std::filesystem::path> backHistory;
     static std::vector<std::filesystem::path> forwardHistory;
 
+
+
     std::map<std::string, std::string> fileIcons = {
             {".obj", "📦"},     // 3D Model
             {".fbx", "📦"},     // 3D Model
@@ -66,9 +75,7 @@ private:
     std::string GetFileIcon(const std::filesystem::path& path);
     std::string GetFileSizeString(const std::filesystem::path& path);
 
-    void DrawFileGrid(Scene& scene, const std::vector<std::filesystem::path>& folders,
-                      const std::vector<std::filesystem::path>& files,
-                      std::filesystem::path& renamingPath, char* renameBuffer, bool& startRename);
+    void DrawFileGrid(Scene& scene, const std::vector<std::filesystem::path>& folders,const std::vector<std::filesystem::path>& files,std::filesystem::path& renamingPath, char* renameBuffer, bool& startRename);
 
     GLuint folderIcon = 0;
     GLuint fileIcon = 0;

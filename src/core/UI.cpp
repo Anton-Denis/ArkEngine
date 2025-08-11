@@ -514,20 +514,17 @@ void UI::DrawObjectInfo(Scene& scene, int selectedIndex, const std::vector<Mesh*
     ImGui::End();
 }
 
-ImVec2 UI::DrawViewport(GLuint texture, int texWidth, int texHeight, Scene& scene) {
+
+ViewportRect UI::DrawViewport(GLuint texture, int texWidth, int texHeight, Scene& scene) {
     ImGui::Begin("Viewport", nullptr, ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_NoScrollWithMouse);
+
     ImVec2 avail = ImGui::GetContentRegionAvail();
     float availAspect = avail.x / avail.y;
     float texAspect = static_cast<float>(texWidth) / texHeight;
 
     ImVec2 imageSize;
-    if (availAspect > texAspect) {
-        imageSize.y = avail.y;
-        imageSize.x = avail.y * texAspect;
-    } else {
-        imageSize.x = avail.x;
-        imageSize.y = avail.x / texAspect;
-    }
+    if (availAspect > texAspect) { imageSize = { avail.y * texAspect, avail.y }; }
+    else                         { imageSize = { avail.x, avail.x / texAspect }; }
 
     ImVec2 cursor = ImGui::GetCursorPos();
     ImVec2 centeredPos = ImVec2(
@@ -536,28 +533,53 @@ ImVec2 UI::DrawViewport(GLuint texture, int texWidth, int texHeight, Scene& scen
     );
     ImGui::SetCursorPos(centeredPos);
 
-    // Invisible Button über das gesamte Bild für Drag & Drop
-    ImGui::InvisibleButton("viewport_dragdrop", imageSize);
+    // Absolute top-left of the IMAGE (not the window)
+    ImVec2 windowPos = ImGui::GetWindowPos();
+    ImVec2 absoluteViewportPos = ImVec2(windowPos.x + centeredPos.x, windowPos.y + centeredPos.y);
 
+    // Interactive area over the image
+    ImGui::InvisibleButton("viewport_dragdrop", imageSize);
     if (ImGui::BeginDragDropTarget()) {
         if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("MODEL_PATH")) {
             const char* modelPath = (const char*)payload->Data;
-            std::string pathStr(modelPath);
-
-            // Direkt neue Model-Instanz erstellen, kein Import
-            auto modelObject = std::make_shared<Model>(pathStr);
-            scene.AddObject(modelObject);
+            scene.AddObject(std::make_shared<Model>(std::string(modelPath)));
         }
         ImGui::EndDragDropTarget();
     }
 
-    // Texture über dem Button zeichnen
+    // Draw the texture
     ImGui::SetCursorPos(centeredPos);
     ImGui::Image((void*)(intptr_t)texture, imageSize, ImVec2(0,1), ImVec2(1,0));
 
     ImGui::End();
-    return imageSize;
+
+    return { absoluteViewportPos, imageSize };
 }
+
+
+void UI::DrawAxisGizmo(const glm::mat4& viewMatrix,
+                                  ImVec2 imageAbsPos, ImVec2 imageSize)
+{
+    const float gizmoSize = 120.0f;
+    const float margin    = 16.0f;
+
+    // Top-right INSIDE the image bounds
+    ImVec2 gizmoPos = ImVec2(
+            imageAbsPos.x + imageSize.x - gizmoSize - margin,
+            imageAbsPos.y + margin
+    );
+
+    // Clip to the image rectangle so nothing spills out
+    ImDrawList* dl = ImGui::GetForegroundDrawList();
+    dl->PushClipRect(imageAbsPos, ImVec2(imageAbsPos.x + imageSize.x,
+                                         imageAbsPos.y + imageSize.y), true);
+
+    GizmoColors colors;
+    ImGui_DrawAxisDotsWithPosLines_Smooth(viewMatrix, gizmoPos, gizmoSize, colors);
+
+    dl->PopClipRect();
+}
+
 
 
 

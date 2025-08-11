@@ -23,5 +23,6 @@ void ArkEngine::Run() {
     UI ui(&window,window.GetWindow());
 
     Renderer renderer(window, scene, shader, camera, ui);
+    renderer.InitializeGrid();
     renderer.Render();
 }

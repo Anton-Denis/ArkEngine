@@ -16,11 +16,13 @@
 #include "../objects/Model.hpp"
 #include "Camera.hpp"
 #include "UI.hpp"
+#include "../objects/Grid.hpp"
 
 class Renderer {
 public:
     Renderer(Window& window, Scene& scene, std::shared_ptr<Shader> shader, Camera& cam, UI& ui);
     void Render();
+    void InitializeGrid();
 private:
     double lastTime = 0.0;
     int nbFrames = 0;
@@ -58,8 +60,7 @@ private:
     std::shared_ptr<Shader> shader;
     Camera& camera;
     UI& ui;
-    std::shared_ptr<Shader> gridShader;
-    std::shared_ptr<Plane> gridPlane;
+    std::unique_ptr<Grid> grid;
 };
 
 #endif //INC_3DRENDERER_RENDERER_HPP
