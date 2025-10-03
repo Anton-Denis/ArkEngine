@@ -219,7 +219,9 @@ void Renderer::RenderGrid(float aspect) {
 }
 
 void Renderer::Render() {
-    CreateViewportFBO(viewportWidth, viewportHeight);
+    static int nextViewportWidth  = viewportWidth  > 0 ? viewportWidth  : 1;
+    static int nextViewportHeight = viewportHeight > 0 ? viewportHeight : 1;
+
     while (!window.ShouldClose()) {
         double frameStart = glfwGetTime();
         deltaTime = frameStart - lastFrameTime;
@@ -228,32 +230,51 @@ void Renderer::Render() {
         UpdateFPS();
         Input();
 
+        // Update Viewport FBO falls Größe sich geändert hat
+        if (viewportFBO == 0 || nextViewportWidth != viewportWidth || nextViewportHeight != viewportHeight) {
+            viewportWidth  = std::max(nextViewportWidth,  1);
+            viewportHeight = std::max(nextViewportHeight, 1);
+            CreateViewportFBO(viewportWidth, viewportHeight);
+        }
+
         glBindFramebuffer(GL_FRAMEBUFFER, viewportFBO);
         glViewport(0, 0, viewportWidth, viewportHeight);
         glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-        int width, height;
-        glfwGetFramebufferSize(window.GetWindow(), &width, &height);
-        float aspect = static_cast<float>(width) / static_cast<float>(height);
+        const float aspect = static_cast<float>(viewportWidth) / static_cast<float>(viewportHeight);
 
+        // Grid vor der Szene ohne Depth-Writes/-Test
+        glDisable(GL_DEPTH_TEST);
+        glDepthMask(GL_FALSE);
+        glEnable(GL_BLEND);
+        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+        RenderGrid(aspect);
+        glDisable(GL_BLEND);
+        glDepthMask(GL_TRUE);
+        glEnable(GL_DEPTH_TEST);
+
+        // Szene
         shader->Use();
         SetProjectionMatrix(camera.GetProjectionMatrix(aspect), camera.GetViewMatrix());
         SetMaterials();
         SetLighting(*shader);
         RenderMeshes();
-        RenderGrid(aspect);
 
         glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
         glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
         UpdateMeshCache();
 
+        // UI
         ui.BeginFrame();
 
+        // Viewport zeichnen
         ViewportRect rect = ui.DrawViewport(viewportTexture, viewportWidth, viewportHeight, scene);
-        ui.DrawAxisGizmo(camera.GetViewMatrix(), rect.pos, rect.size);
+        nextViewportWidth  = std::max(1, static_cast<int>(rect.size.x));
+        nextViewportHeight = std::max(1, static_cast<int>(rect.size.y));
 
+        ui.DrawAxisGizmo(camera.GetViewMatrix(), rect.pos, rect.size);
         ui.Draw(cachedMeshes, scene);
         ui.EndFrame();
 

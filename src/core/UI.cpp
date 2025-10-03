@@ -71,14 +71,13 @@ void UI::EndFrame() {
 void UI::Draw(const std::vector<Mesh*>& meshes, Scene& scene) {
     static int selectedIndex = 0;
 
-    // Menüleiste größer machen
     ImGuiStyle& style = ImGui::GetStyle();
     ImVec2 oldPadding = style.FramePadding;
-    style.FramePadding.y = 8.0f; // z.B. 8.0f für mehr Höhe
+    style.FramePadding.y = 8.0f;
 
     DrawMainMenu(scene);
 
-    style.FramePadding = oldPadding; // Padding zurücksetzen
+    style.FramePadding = oldPadding;
 
     DrawSceneList(scene, selectedIndex);
     DrawObjectInfo(scene, selectedIndex, meshes);
@@ -89,7 +88,7 @@ void UI::Draw(const std::vector<Mesh*>& meshes, Scene& scene) {
 void UI::DrawMainMenu(Scene& scene) {
     ImGuiStyle& style = ImGui::GetStyle();
     ImVec2 oldPadding = style.FramePadding;
-    style.FramePadding.y = 10.0f; // Menüleiste höher machen
+    style.FramePadding.y = 10.0f;
 
     if (ImGui::BeginMainMenuBar()) {
         if (ImGui::BeginMenu("File")) {
@@ -134,7 +133,6 @@ void UI::DrawSceneList(Scene& scene, int& selectedIndex) {
         if (ImGui::IsItemHovered())
             anyItemHovered = true;
 
-        // Rechtsklick-Kontextmenü für Objekt-Löschung
         if (ImGui::BeginPopupContextItem(("ObjectMenu" + std::to_string(i)).c_str())) {
             if (ImGui::MenuItem("Delete")) {
                 scene.RemoveObjectAt(i);
@@ -164,7 +162,6 @@ void UI::DrawSceneList(Scene& scene, int& selectedIndex) {
         ImGui::EndDragDropTarget();
     }
 
-    // Kontextmenü zum Hinzufügen neuer Objekte
     if (!anyItemHovered && ImGui::BeginPopupContextWindow("SceneContextMenu", ImGuiPopupFlags_MouseButtonRight)) {
         if (ImGui::BeginMenu("Add GameObject")) {
             if (ImGui::MenuItem("Cube")) {
@@ -192,7 +189,6 @@ void UI::DrawSceneList(Scene& scene, int& selectedIndex) {
 }
 
 void UI::LoadIcons() {
-    // Lade Ordner-Icon
     folderIcon = ResourceManager::GetTexture("resources/icons/folder.png");
     fileIcon = ResourceManager::GetTexture("resources/icons/file.png");
 }
@@ -515,29 +511,19 @@ void UI::DrawObjectInfo(Scene& scene, int selectedIndex, const std::vector<Mesh*
 }
 
 
-ViewportRect UI::DrawViewport(GLuint texture, int texWidth, int texHeight, Scene& scene) {
+ViewportRect UI::DrawViewport(GLuint texture, int /*texWidth*/, int /*texHeight*/, Scene& scene) {
     ImGui::Begin("Viewport", nullptr, ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_NoScrollWithMouse);
 
     ImVec2 avail = ImGui::GetContentRegionAvail();
-    float availAspect = avail.x / avail.y;
-    float texAspect = static_cast<float>(texWidth) / texHeight;
+    // Verhindere 0x0
+    ImVec2 imageSize = ImVec2(std::max(1.0f, avail.x), std::max(1.0f, avail.y));
 
-    ImVec2 imageSize;
-    if (availAspect > texAspect) { imageSize = { avail.y * texAspect, avail.y }; }
-    else                         { imageSize = { avail.x, avail.x / texAspect }; }
-
+    // aktuelle Cursor-Position innerhalb des Fensters (oben-links der Bildfläche)
     ImVec2 cursor = ImGui::GetCursorPos();
-    ImVec2 centeredPos = ImVec2(
-            cursor.x + (avail.x - imageSize.x) * 0.5f,
-            cursor.y + (avail.y - imageSize.y) * 0.5f
-    );
-    ImGui::SetCursorPos(centeredPos);
-
-    // Absolute top-left of the IMAGE (not the window)
     ImVec2 windowPos = ImGui::GetWindowPos();
-    ImVec2 absoluteViewportPos = ImVec2(windowPos.x + centeredPos.x, windowPos.y + centeredPos.y);
+    ImVec2 absoluteViewportPos = ImVec2(windowPos.x + cursor.x, windowPos.y + cursor.y);
 
-    // Interactive area over the image
+    // Interaktive Fläche für Drag&Drop über die ganze Bildfläche
     ImGui::InvisibleButton("viewport_dragdrop", imageSize);
     if (ImGui::BeginDragDropTarget()) {
         if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("MODEL_PATH")) {
@@ -547,12 +533,11 @@ ViewportRect UI::DrawViewport(GLuint texture, int texWidth, int texHeight, Scene
         ImGui::EndDragDropTarget();
     }
 
-    // Draw the texture
-    ImGui::SetCursorPos(centeredPos);
-    ImGui::Image((void*)(intptr_t)texture, imageSize, ImVec2(0,1), ImVec2(1,0));
+    // Textur 1:1 auf die gesamte Fläche zeichnen (Flip Y beibehalten)
+    ImGui::SetCursorPos(cursor);
+    ImGui::Image((void*)(intptr_t)texture, imageSize, ImVec2(0, 1), ImVec2(1, 0));
 
     ImGui::End();
-
     return { absoluteViewportPos, imageSize };
 }
 

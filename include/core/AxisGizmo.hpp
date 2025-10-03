@@ -79,10 +79,6 @@ inline void ImGui_DrawAxisDotsWithPosLines_Smooth(const glm::mat4& view,ImVec2 s
     const ImVec2 c  = ImVec2((p0.x+p1.x)*0.5f, (p0.y+p1.y)*0.5f);
     const float r   = size * 0.42f;
 
-    // Panel
-    dl->AddRectFilled(p0, p1, colors.bg, 8.0f);
-    dl->AddCircle(c, r, colors.ring, 64, 1.0f);
-
     const glm::mat3 R = glm::mat3(view); // world->camera rotation
 
     struct Dot { ImVec2 pos; float z; ImU32 fill; float radius; bool isPositive; int axis; };

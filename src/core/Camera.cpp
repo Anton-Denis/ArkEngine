@@ -10,7 +10,7 @@ Camera::Camera(GLFWwindow* window, bool hideCursor) {
     glfwSetWindowUserPointer(window, this);
     glfwSetCursorPosCallback(window, Camera::mouse_callback_dispatch);
 
-    position = glm::vec3(0.0f, 0.0f, 3.0f);
+    position = glm::vec3(0.0f, 2.0f, 3.0f);
     glm::vec3 target = glm::vec3(0.0f, 0.0f, 0.0f);
     front = glm::normalize(target - position);
     up = glm::vec3(0.0f, 1.0f, 0.0f);

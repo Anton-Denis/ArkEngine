@@ -120,5 +120,7 @@ void main() {
     // Alpha aus Linienbedeckung ableiten + Fade
     float alpha = clamp(max(gridMask, max(axisX, axisZ)) * fade, 0.0, 1.0);
 
+    if (alpha <= 0.0) discard;
+
     FragColor = vec4(col, alpha);
 }
