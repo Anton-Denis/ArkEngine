@@ -29,6 +29,11 @@ public:
     ViewportRect DrawViewport(GLuint texture, int texWidth, int texHeight, Scene& scene);
     void DrawAxisGizmo(const glm::mat4& viewMatrix, ImVec2 imageAbsPos, ImVec2 imageSize);
 
+    // Check if viewport was clicked this frame
+    bool IsViewportClicked() const { return viewportClicked; }
+    bool IsViewportFocused() const { return viewportFocused; }
+    bool IsViewportHovered() const { return viewportHoveredFrame; }
+
     void DrawDirectoryTree();
     void DrawFileBrowser(Scene& scene);
 
@@ -51,7 +56,9 @@ private:
     static std::vector<std::filesystem::path> backHistory;
     static std::vector<std::filesystem::path> forwardHistory;
 
-
+    bool viewportClicked = false;  // Track viewport click state
+    bool viewportFocused = false;  // Track viewport focus state
+    bool viewportHoveredFrame = false; // internal per-frame hover state
 
     std::map<std::string, std::string> fileIcons = {
             {".obj", "📦"},     // 3D Model

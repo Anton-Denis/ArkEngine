@@ -104,6 +104,7 @@ add_executable(3DRenderer
         src/core/UI.cpp
         src/core/ResourceManager.cpp
         src/core/ArkEngine.cpp
+        src/core/InputSystem.cpp
         src/objects/Mesh.cpp
         src/objects/Model.cpp
         src/core/ProjectManager.cpp

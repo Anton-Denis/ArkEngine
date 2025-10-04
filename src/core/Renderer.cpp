@@ -10,34 +10,16 @@
 #include <thread>
 #include <map>
 
-Renderer::Renderer(Window& win, Scene& sc, std::shared_ptr<Shader> sh, Camera& cam, UI& ui)
-        : window(win), scene(sc), shader(sh), camera(cam), ui(ui) {
-    camera.paused = &paused;
+Renderer::Renderer(Window& win, Scene& sc, std::shared_ptr<Shader> sh, Camera& cam, UI& ui, InputSystem* inputSys)
+        : window(win), scene(sc), shader(sh), camera(cam), ui(ui), inputSystem(inputSys) {
     glEnable(GL_DEPTH_TEST);
-}
 
-void Renderer::Input() {
-    if (glfwGetKey(window.GetWindow(), GLFW_KEY_ESCAPE) == GLFW_PRESS) {
-        if (!escPressedLastFrame) {
-            paused = !paused;
-            if (paused)
-                glfwSetInputMode(window.GetWindow(), GLFW_CURSOR, GLFW_CURSOR_NORMAL);
-            else {
-                glfwSetInputMode(window.GetWindow(), GLFW_CURSOR, GLFW_CURSOR_DISABLED);
-                double xpos, ypos;
-                glfwGetCursorPos(window.GetWindow(), &xpos, &ypos);
-                camera.lastX = xpos;
-                camera.lastY = ypos;
-                camera.firstMouse = true;
-            }
-        }
-        escPressedLastFrame = true;
-    } else {
-        escPressedLastFrame = false;
-    }
-    if (!paused) {
-        camera.Movement(window.GetWindow(), deltaTime);
-    }
+    // Start im Editor-Modus: Cursor frei, keine Kamera-Eingabe
+    paused = true;
+    inputSystem->SetCursorMode(false); // sichtbar & frei
+    camera.SetInputEnabled(false);
+    inputSystem->SetCameraInputEnabled(false);
+    std::cout << "[Renderer] Start Editor Mode: cursor unlocked, camera input disabled" << std::endl;
 }
 
 void Renderer::UpdateFPS() {
@@ -226,11 +208,11 @@ void Renderer::Render() {
         double frameStart = glfwGetTime();
         deltaTime = frameStart - lastFrameTime;
         lastFrameTime = frameStart;
-
         UpdateFPS();
-        Input();
 
-        // Update Viewport FBO falls Größe sich geändert hat
+        ui.BeginFrame();
+        inputSystem->Update();
+
         if (viewportFBO == 0 || nextViewportWidth != viewportWidth || nextViewportHeight != viewportHeight) {
             viewportWidth  = std::max(nextViewportWidth,  1);
             viewportHeight = std::max(nextViewportHeight, 1);
@@ -241,38 +223,52 @@ void Renderer::Render() {
         glViewport(0, 0, viewportWidth, viewportHeight);
         glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
         const float aspect = static_cast<float>(viewportWidth) / static_cast<float>(viewportHeight);
 
-        // Grid vor der Szene ohne Depth-Writes/-Test
-        glDisable(GL_DEPTH_TEST);
-        glDepthMask(GL_FALSE);
-        glEnable(GL_BLEND);
-        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+        glDisable(GL_DEPTH_TEST); glDepthMask(GL_FALSE); glEnable(GL_BLEND); glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
         RenderGrid(aspect);
-        glDisable(GL_BLEND);
-        glDepthMask(GL_TRUE);
-        glEnable(GL_DEPTH_TEST);
+        glDisable(GL_BLEND); glDepthMask(GL_TRUE); glEnable(GL_DEPTH_TEST);
 
-        // Szene
         shader->Use();
         SetProjectionMatrix(camera.GetProjectionMatrix(aspect), camera.GetViewMatrix());
         SetMaterials();
         SetLighting(*shader);
         RenderMeshes();
-
         glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
         glBindFramebuffer(GL_FRAMEBUFFER, 0);
-
         UpdateMeshCache();
 
-        // UI
-        ui.BeginFrame();
-
-        // Viewport zeichnen
+        // Viewport JETZT zeichnen -> Hover-Status verfügbar
         ViewportRect rect = ui.DrawViewport(viewportTexture, viewportWidth, viewportHeight, scene);
+        lastViewportRect = rect; hasViewportRect = true;
         nextViewportWidth  = std::max(1, static_cast<int>(rect.size.x));
         nextViewportHeight = std::max(1, static_cast<int>(rect.size.y));
+
+        // Jetzt Playmode bestimmen (Alt oder RMB + Hover)
+        bool altDown = inputSystem->IsKeyPressed(GLFW_KEY_LEFT_ALT) || inputSystem->IsKeyPressed(GLFW_KEY_RIGHT_ALT);
+        bool rmbDown = inputSystem->IsMouseButtonPressed(GLFW_MOUSE_BUTTON_RIGHT);
+        bool wantPlay = (altDown || (rmbDown && ui.IsViewportHovered()));
+        if (wantPlay) {
+            if (paused) {
+                paused = false;
+                inputSystem->SetCursorMode(true);
+                camera.SetInputEnabled(true);
+                inputSystem->SetCameraInputEnabled(true);
+                std::cout << "[Renderer] Enter Play Mode (Alt/RMB)" << std::endl;
+            }
+        } else {
+            if (!paused) {
+                paused = true;
+                inputSystem->SetCursorMode(false);
+                camera.SetInputEnabled(false);
+                inputSystem->SetCameraInputEnabled(false);
+                std::cout << "[Renderer] Return to Editor Mode" << std::endl;
+            }
+        }
+
+        if (!paused) {
+            camera.Update(inputSystem, static_cast<float>(deltaTime));
+        }
 
         ui.DrawAxisGizmo(camera.GetViewMatrix(), rect.pos, rect.size);
         ui.Draw(cachedMeshes, scene);
@@ -280,6 +276,7 @@ void Renderer::Render() {
 
         window.SwapBuffers();
         window.PollEvents();
+        inputSystem->LateUpdate();
 
         LimitFPS(frameStart, 300.0);
     }

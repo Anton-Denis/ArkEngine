@@ -16,12 +16,14 @@ UI::UI(Window* windowObj, GLFWwindow* window) : windowObj(windowObj), window(win
     IMGUI_CHECKVERSION();
     ImGui::CreateContext();
     ImGui::GetIO().ConfigFlags |= ImGuiConfigFlags_DockingEnable;
-    ImGui_ImplGlfw_InitForOpenGL(window, true);
+    ImGui_ImplGlfw_InitForOpenGL(window, false);  // ✅ FIX: Changed from true to false - don't install callbacks
     ImGui_ImplOpenGL3_Init("#version 330");
     ImGuiIO& io = ImGui::GetIO();
     io.FontDefault = io.Fonts->AddFontFromFileTTF("resources/fonts/DMSans_36pt-Regular.ttf", 16.0f);
     SetStyle();
     LoadIcons();
+
+    std::cout << "[UI] Initialized: ImGui callbacks NOT overriding InputSystem" << std::endl;
 }
 
 UI::~UI() {
@@ -42,6 +44,14 @@ void UI::BeginFrame() {
     ImGui_ImplOpenGL3_NewFrame();
     ImGui_ImplGlfw_NewFrame();
     ImGui::NewFrame();
+
+    // Reset per-frame states
+    viewportClicked = false;
+    viewportHoveredFrame = false;
+    // Defocus viewport on any left click; will be re-focused in DrawViewport if click is inside
+    if (ImGui::IsMouseClicked(ImGuiMouseButton_Left)) {
+        viewportFocused = false;
+    }
 
     ImGuiWindowFlags window_flags = 0;
     ImGuiViewport* viewport = ImGui::GetMainViewport();
@@ -525,6 +535,22 @@ ViewportRect UI::DrawViewport(GLuint texture, int /*texWidth*/, int /*texHeight*
 
     // Interaktive Fläche für Drag&Drop über die ganze Bildfläche
     ImGui::InvisibleButton("viewport_dragdrop", imageSize);
+    // Hover/Focus logic
+    if (ImGui::IsItemHovered()) {
+        viewportHoveredFrame = true;
+    }
+    if (ImGui::IsItemClicked(ImGuiMouseButton_Left)) {
+        viewportClicked = true;
+        viewportFocused = true; // Focus when clicked
+    }
+    // Keep focus also if window itself gains focus via ImGui (e.g. click title bar)
+    if (ImGui::IsWindowFocused(ImGuiFocusedFlags_RootAndChildWindows)) {
+        // Do not override explicit defocus unless user clicked elsewhere
+        if (viewportHoveredFrame) {
+            viewportFocused = true;
+        }
+    }
+
     if (ImGui::BeginDragDropTarget()) {
         if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("MODEL_PATH")) {
             const char* modelPath = (const char*)payload->Data;
