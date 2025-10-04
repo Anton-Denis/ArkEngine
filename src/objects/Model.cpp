@@ -3,6 +3,7 @@
 //
 
 #include "../../include/objects/Model.hpp"
+#include <filesystem>
 
 void Model::Draw(Shader &shader)
 {
@@ -31,8 +32,8 @@ void Model::loadModel(std::string path)
         std::cout << "ERROR::ASSIMP::" << import.GetErrorString() << std::endl;
         return;
     }
-    // directory ist jetzt relativ zum Projektverzeichnis
-    directory = path.substr(0, path.find_last_of('/'));
+
+    directory = std::filesystem::path(path).parent_path().string();
 
     processNode(scene->mRootNode, scene);
 }
@@ -72,11 +73,11 @@ Mesh Model::processMesh(aiMesh *mesh, const aiScene *scene)
             vertex.normal.z = mesh->mNormals[i].z;
         }
 
-        if(mesh->mTextureCoords[0]) // does the mesh contain texture coordinates?
+        if(mesh->mTextureCoords[0])
         {
             glm::vec2 vec;
             vec.x = mesh->mTextureCoords[0][i].x;
-            vec.y = mesh->mTextureCoords[0][i].y;
+            vec.y = 1.0f - mesh->mTextureCoords[0][i].y;
             vertex.texCoords = vec;
         }
         else
@@ -113,13 +114,28 @@ std::vector<Texture> Model::loadMaterialTextures(aiMaterial *mat, aiTextureType 
     {
         aiString str;
         mat->GetTexture(type, i, &str);
-        Texture texture;
-        // Korrigierter Pfad: relativ zum Projektverzeichnis
-        std::string filename = directory + "/" + str.C_Str();
-        texture.id = ResourceManager::GetTexture(filename);
-        texture.type = typeName;
-        texture.path = filename;
-        textures.push_back(texture);
+        bool skip = false;
+        for(unsigned int j = 0; j < textures_loaded.size(); j++)
+        {
+            if(std::strcmp(textures_loaded[j].path.data(), str.C_Str()) == 0)
+            {
+                textures.push_back(textures_loaded[j]);
+                skip = true;
+                break;
+            }
+        }
+        if(!skip)
+        {
+            std::filesystem::path texPath = std::filesystem::path(directory) / str.C_Str();
+            texPath = texPath.lexically_normal();
+
+            Texture texture;
+            texture.id = ResourceManager::GetTexture(texPath.string());
+            texture.type = typeName;
+            texture.path = texPath.string();
+            textures.push_back(texture);
+            textures_loaded.push_back(texture);
+        }
     }
     return textures;
 }

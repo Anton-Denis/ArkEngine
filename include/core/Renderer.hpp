@@ -16,19 +16,23 @@
 #include "../objects/Model.hpp"
 #include "Camera.hpp"
 #include "UI.hpp"
+#include "../objects/Grid.hpp"
+#include "InputSystem.hpp"
+#include "../objects/SpotLight.hpp"
 
 class Renderer {
 public:
-    Renderer(Window& window, Scene& scene, std::shared_ptr<Shader> shader, Camera& cam, UI& ui);
+    Renderer(Window& window, Scene& scene, std::shared_ptr<Shader> shader, Camera& cam, UI& ui, InputSystem* inputSys);
     void Render();
+    void InitializeGrid();
 private:
     double lastTime = 0.0;
     int nbFrames = 0;
     double deltaTime = 0.0f;
     double lastFrameTime = 0.0f;
 
-    bool paused = false;
-    bool escPressedLastFrame = false;
+    bool paused = true; // true = Editor mode (cursor free, no camera input), false = Play mode
+    bool escPressedLastFrame = false; // unused now but kept if needed later
 
     std::vector<Mesh*> cachedMeshes;
     bool meshesDirty = true;
@@ -51,15 +55,16 @@ private:
     void SetMaterials();
     void SetLighting(Shader& shader);
 
-    void Input();
-
     Window& window;
     Scene& scene;
     std::shared_ptr<Shader> shader;
     Camera& camera;
     UI& ui;
-    std::shared_ptr<Shader> gridShader;
-    std::shared_ptr<Plane> gridPlane;
+    InputSystem* inputSystem;
+    std::unique_ptr<Grid> grid;
+
+    ViewportRect lastViewportRect{ {0,0}, {0,0} };
+    bool hasViewportRect = false;
 };
 
 #endif //INC_3DRENDERER_RENDERER_HPP

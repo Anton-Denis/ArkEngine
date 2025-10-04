@@ -9,35 +9,18 @@
 #include <sstream>
 #include <thread>
 #include <map>
+#include "../../include/core/MonitoringMetrics.hpp"
 
-Renderer::Renderer(Window& win, Scene& sc, std::shared_ptr<Shader> sh, Camera& cam, UI& ui)
-        : window(win), scene(sc), shader(sh), camera(cam), ui(ui) {
-    camera.paused = &paused;
+Renderer::Renderer(Window& win, Scene& sc, std::shared_ptr<Shader> sh, Camera& cam, UI& ui, InputSystem* inputSys)
+        : window(win), scene(sc), shader(sh), camera(cam), ui(ui), inputSystem(inputSys) {
     glEnable(GL_DEPTH_TEST);
-}
 
-void Renderer::Input() {
-    if (glfwGetKey(window.GetWindow(), GLFW_KEY_ESCAPE) == GLFW_PRESS) {
-        if (!escPressedLastFrame) {
-            paused = !paused;
-            if (paused)
-                glfwSetInputMode(window.GetWindow(), GLFW_CURSOR, GLFW_CURSOR_NORMAL);
-            else {
-                glfwSetInputMode(window.GetWindow(), GLFW_CURSOR, GLFW_CURSOR_DISABLED);
-                double xpos, ypos;
-                glfwGetCursorPos(window.GetWindow(), &xpos, &ypos);
-                camera.lastX = xpos;
-                camera.lastY = ypos;
-                camera.firstMouse = true;
-            }
-        }
-        escPressedLastFrame = true;
-    } else {
-        escPressedLastFrame = false;
-    }
-    if (!paused) {
-        camera.Movement(window.GetWindow(), deltaTime);
-    }
+    // Start im Editor-Modus: Cursor frei, keine Kamera-Eingabe
+    paused = true;
+    inputSystem->SetCursorMode(false); // sichtbar & frei
+    camera.SetInputEnabled(false);
+    inputSystem->SetCameraInputEnabled(false);
+    std::cout << "[Renderer] Start Editor Mode: cursor unlocked, camera input disabled" << std::endl;
 }
 
 void Renderer::UpdateFPS() {
@@ -136,47 +119,53 @@ void Renderer::SetMaterials() {
 void Renderer::SetLighting(Shader& shader) {
     int pointLightIdx = 0;
     int numPointLights = 0;
-    bool hasDirLight = false;
-
     std::vector<Light*> pointLights;
     Light* dirLight = nullptr;
+    // SpotLights
+    int spotLightIdx = 0;
+    std::vector<SpotLight*> spotLights;
 
     for (const auto& obj : scene.GetObjects()) {
         if (auto* light = dynamic_cast<Light*>(obj.get())) {
-            if (light->type == Light::Type::Point && pointLightIdx < 16) {
-                pointLights.push_back(light);
-                ++pointLightIdx;
-            } else if (light->type == Light::Type::Directional && !dirLight) {
-                dirLight = light;
+            switch (light->type) {
+                case Light::Type::Point:
+                    if (pointLightIdx < 32) { pointLights.push_back(light); ++pointLightIdx; }
+                    break;
+                case Light::Type::Directional:
+                    if (!dirLight) dirLight = light;
+                    break;
+                case Light::Type::Spot:
+                    if (spotLightIdx < 16) { spotLights.push_back(static_cast<SpotLight*>(light)); ++spotLightIdx; }
+                    break;
             }
         }
     }
     numPointLights = static_cast<int>(pointLights.size());
 
+    // Upload point lights
     for (int i = 0; i < numPointLights; ++i) {
-        auto* light = pointLights[i];
-        shader.SetVec3("pointLights[" + std::to_string(i) + "].position", light->GetPosition());
-        shader.SetVec3("pointLights[" + std::to_string(i) + "].ambient",  light->color * 0.1f);
-        shader.SetVec3("pointLights[" + std::to_string(i) + "].diffuse",  light->color * 0.8f);
-        shader.SetVec3("pointLights[" + std::to_string(i) + "].specular", light->color * 1.0f);
-        shader.SetFloat("pointLights[" + std::to_string(i) + "].constant",  light->constant);
-        shader.SetFloat("pointLights[" + std::to_string(i) + "].linear",    light->linear);
-        shader.SetFloat("pointLights[" + std::to_string(i) + "].quadratic", light->quadratic);
+        pointLights[i]->UploadToShader(&shader, i);
     }
     shader.SetInt("numPointLights", numPointLights);
 
+    // Directional light (ein einziger)
     if (dirLight) {
         shader.SetVec3("dirLight.direction", dirLight->direction);
         shader.SetVec3("dirLight.ambient",  dirLight->color * 0.1f);
         shader.SetVec3("dirLight.diffuse",  dirLight->color * 0.8f);
         shader.SetVec3("dirLight.specular", dirLight->color * 1.0f);
-        hasDirLight = true;
     } else {
-        shader.SetVec3("dirLight.direction", glm::vec3(0,0,0));
-        shader.SetVec3("dirLight.ambient",  glm::vec3(0,0,0));
-        shader.SetVec3("dirLight.diffuse",  glm::vec3(0,0,0));
-        shader.SetVec3("dirLight.specular", glm::vec3(0,0,0));
+        shader.SetVec3("dirLight.direction", glm::vec3(0));
+        shader.SetVec3("dirLight.ambient",  glm::vec3(0));
+        shader.SetVec3("dirLight.diffuse",  glm::vec3(0));
+        shader.SetVec3("dirLight.specular", glm::vec3(0));
     }
+
+    // SpotLights
+    for (int i = 0; i < (int)spotLights.size(); ++i) {
+        spotLights[i]->UploadToShader(&shader, i);
+    }
+    shader.SetInt("numSpotLights", (int)spotLights.size());
 }
 
 void Renderer::RenderMeshes() {
@@ -208,59 +197,103 @@ void Renderer::RenderMeshes() {
     }
 }
 
+void Renderer::InitializeGrid() {
+    grid = std::make_unique<Grid>();
+}
+
 void Renderer::RenderGrid(float aspect) {
-    gridShader->Use();
-
-    // ViewUniforms setzen (siehe Shader)
-    gridShader->SetMat4("view.view", camera.GetViewMatrix());
-    gridShader->SetMat4("view.proj", camera.GetProjectionMatrix(aspect));
-    gridShader->SetVec3("view.pos", camera.position);
-
-    // Model-Matrix für das Plane
-    glm::mat4 model = ComputeModelMatrix(*gridPlane);
-    gridShader->SetMat4("model", model);
-
-    // Plane-Mesh zeichnen
-    gridPlane->GetMesh()->DrawInstanced(*gridShader);
+    if (grid) {
+        grid->Render(camera, aspect);
+    }
 }
 
 void Renderer::Render() {
-    CreateViewportFBO(viewportWidth, viewportHeight);
+    static int nextViewportWidth  = viewportWidth  > 0 ? viewportWidth  : 1;
+    static int nextViewportHeight = viewportHeight > 0 ? viewportHeight : 1;
+
     while (!window.ShouldClose()) {
         double frameStart = glfwGetTime();
+        MonitoringMetrics& mon = MonitoringMetrics::Instance();
+        mon.BeginFrameCpu();
+        mon.BeginFrameGpu();
+
         deltaTime = frameStart - lastFrameTime;
         lastFrameTime = frameStart;
-
         UpdateFPS();
-        Input();
+
+        ui.BeginFrame();
+        inputSystem->Update();
+
+        if (viewportFBO == 0 || nextViewportWidth != viewportWidth || nextViewportHeight != viewportHeight) {
+            viewportWidth  = std::max(nextViewportWidth,  1);
+            viewportHeight = std::max(nextViewportHeight, 1);
+            CreateViewportFBO(viewportWidth, viewportHeight);
+        }
 
         glBindFramebuffer(GL_FRAMEBUFFER, viewportFBO);
         glViewport(0, 0, viewportWidth, viewportHeight);
         glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+        const float aspect = static_cast<float>(viewportWidth) / static_cast<float>(viewportHeight);
 
-        int width, height;
-        glfwGetFramebufferSize(window.GetWindow(), &width, &height);
-        float aspect = static_cast<float>(width) / static_cast<float>(height);
+        glDisable(GL_DEPTH_TEST); glDepthMask(GL_FALSE); glEnable(GL_BLEND); glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+        RenderGrid(aspect);
+        glDisable(GL_BLEND); glDepthMask(GL_TRUE); glEnable(GL_DEPTH_TEST);
 
         shader->Use();
         SetProjectionMatrix(camera.GetProjectionMatrix(aspect), camera.GetViewMatrix());
         SetMaterials();
         SetLighting(*shader);
         RenderMeshes();
-
         glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
         glBindFramebuffer(GL_FRAMEBUFFER, 0);
-
         UpdateMeshCache();
 
-        ui.BeginFrame();
-        ui.DrawViewport(viewportTexture, viewportWidth, viewportHeight, scene);
+        // Viewport JETZT zeichnen -> Hover-Status verfügbar
+        ViewportRect rect = ui.DrawViewport(viewportTexture, viewportWidth, viewportHeight, scene);
+        lastViewportRect = rect; hasViewportRect = true;
+        nextViewportWidth  = std::max(1, static_cast<int>(rect.size.x));
+        nextViewportHeight = std::max(1, static_cast<int>(rect.size.y));
+
+        // Jetzt Playmode bestimmen (Alt oder RMB + Hover)
+        bool altDown = inputSystem->IsKeyPressed(GLFW_KEY_LEFT_ALT) || inputSystem->IsKeyPressed(GLFW_KEY_RIGHT_ALT);
+        bool rmbDown = inputSystem->IsMouseButtonPressed(GLFW_MOUSE_BUTTON_RIGHT);
+        bool wantPlay = (altDown || (rmbDown && ui.IsViewportHovered()));
+        if (wantPlay) {
+            if (paused) {
+                paused = false;
+                inputSystem->SetCursorMode(true);
+                camera.SetInputEnabled(true);
+                inputSystem->SetCameraInputEnabled(true);
+                std::cout << "[Renderer] Enter Play Mode (Alt/RMB)" << std::endl;
+            }
+        } else {
+            if (!paused) {
+                paused = true;
+                inputSystem->SetCursorMode(false);
+                camera.SetInputEnabled(false);
+                inputSystem->SetCameraInputEnabled(false);
+                std::cout << "[Renderer] Return to Editor Mode" << std::endl;
+            }
+        }
+
+        if (!paused) {
+            camera.Update(inputSystem, static_cast<float>(deltaTime));
+        }
+
+        ui.DrawAxisGizmo(camera.GetViewMatrix(), rect.pos, rect.size);
         ui.Draw(cachedMeshes, scene);
+        // GPU Ende vor ImGui Render (Render bereits passiert)
+        mon.EndFrameGpu();
         ui.EndFrame();
 
         window.SwapBuffers();
         window.PollEvents();
+        inputSystem->LateUpdate();
+
+        mon.EndFrameCpu(deltaTime); // frameTimeSeconds
+        mon.UpdateProcessCpu();
+        mon.UpdateMemory();
 
         LimitFPS(frameStart, 300.0);
     }

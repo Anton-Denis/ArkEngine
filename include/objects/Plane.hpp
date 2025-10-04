@@ -8,11 +8,7 @@
 class Plane : public Shapes {
 public:
     Plane(const std::vector<Texture>& textures = {}) {
-        mesh = std::make_shared<Mesh>(
-                GetVertices(),
-                GetIndices(),
-                textures.empty() ? GetDefaultTextures() : textures
-        );
+        mesh = std::make_shared<Mesh>(GetVertices(),GetIndices(),textures.empty() ? GetDefaultTextures() : textures);
     }
 
 private:
@@ -41,7 +37,9 @@ private:
                 0.5f, 0.0f,  0.5f,  0,1,0,   1.0f, 1.0f,
                 -0.5f, 0.0f,  0.5f,  0,1,0,   0.0f, 1.0f
         };
+
         std::vector<Vertex> vertices;
+
         for (size_t i = 0; i < 4; ++i) {
             Vertex v;
             v.position = glm::vec3(rawVertices[i * 8 + 0], rawVertices[i * 8 + 1], rawVertices[i * 8 + 2]);
@@ -49,6 +47,7 @@ private:
             v.texCoords= glm::vec2(rawVertices[i * 8 + 6], rawVertices[i * 8 + 7]);
             vertices.push_back(v);
         }
+
         return vertices;
     }
 
@@ -57,6 +56,7 @@ private:
                 0, 1, 2,
                 2, 3, 0
         };
+
         return std::vector<unsigned int>(idx, idx + 6);
     }
 };

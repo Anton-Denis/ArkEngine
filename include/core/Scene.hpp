@@ -2,6 +2,11 @@
 #include <vector>
 #include <memory>
 #include "../objects/GameObject.hpp"
+#include "../../include/core/Scene.hpp"
+#include "../../include/objects/Light.hpp"
+#include "../../include/objects/Model.hpp"
+#include "../../include/core/ResourceManager.hpp"
+#include <nlohmann/json.hpp>
 
 class Scene {
 public:

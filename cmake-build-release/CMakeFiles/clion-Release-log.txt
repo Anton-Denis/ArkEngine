@@ -64,6 +64,6 @@ CMake Deprecation Warning at cmake-build-release/_deps/assimp-src/code/CMakeList
 
 
 -- Using the multi-header code from C:/Users/anton/CLionProjects/3DRenderer/cmake-build-release/_deps/nlohmann_json-src/include/
--- Configuring done (0.9s)
+-- Configuring done (0.8s)
 -- Generating done (0.2s)
 -- Build files have been written to: C:/Users/anton/CLionProjects/3DRenderer/cmake-build-release

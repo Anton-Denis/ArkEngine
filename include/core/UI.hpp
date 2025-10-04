@@ -4,13 +4,19 @@
 #include "backends/imgui_impl_opengl3.h"
 #include "GLFW/glfw3.h"
 #include <vector>
-#include <map>
+#include <memory>
+#include <filesystem>
 #include "Scene.hpp"
 #include "../objects/Mesh.hpp"
 #include "../objects/PointLight.hpp"
 #include "../objects/DirectionalLight.hpp"
 #include "../core/Window.hpp"
 #include "../core/ProjectManager.hpp"
+#include "../core/AxisGizmo.hpp"
+#include "ui/IPanel.hpp"
+#include "ui/PanelContext.hpp"
+
+struct ViewportRect { ImVec2 pos; ImVec2 size; };
 
 class UI {
 public:
@@ -19,64 +25,36 @@ public:
 
     void BeginFrame();
     void EndFrame();
+
+    // Zeichnet alle registrierten Panels (ohne Viewport/Achsen-Gizmo)
     void Draw(const std::vector<Mesh*>& meshes, Scene& scene);
-    ImVec2 DrawViewport(GLuint texture, int texWidth, int texHeight, Scene& scene);
 
-    void DrawDirectoryTree();
-    void DrawFileBrowser(Scene& scene);
+    // Viewport separat (Renderer ruft das auf)
+    ViewportRect DrawViewport(GLuint texture, int texWidth, int texHeight, Scene& scene);
+    void DrawAxisGizmo(const glm::mat4& viewMatrix, ImVec2 imageAbsPos, ImVec2 imageSize);
 
-    static std::string selectedFile;
-    static bool showFileDialog;
-    static std::filesystem::path selectedDir;
+    bool IsViewportClicked() const { return viewportClicked; }
+    bool IsViewportFocused() const { return viewportFocused; }
+    bool IsViewportHovered() const { return viewportHoveredFrame; }
+
+    SelectionState& GetSelectionState() { return selectionState; }
 
 private:
-    void DrawMainMenu(Scene& scene);
-    void DrawSceneList(Scene& scene, int& selectedIndex);
-    void DrawObjectInfo(Scene& scene, int selectedIndex, const std::vector<Mesh*>& meshes);
-    void DrawStylingEditor();
     void SetStyle();
-    void LoadStyle(const std::string& filename);
-    void SaveStyle(const std::string& filename);
-    void DrawDirectoryTreeRecursive(const std::filesystem::path& dir);
-    void DrawDirectoryContextMenu(const std::filesystem::path& dir, bool isRoot);
-    void DrawBreadcrumbs();
-
-    static std::vector<std::filesystem::path> backHistory;
-    static std::vector<std::filesystem::path> forwardHistory;
-
-    std::map<std::string, std::string> fileIcons = {
-            {".obj", "📦"},     // 3D Model
-            {".fbx", "📦"},     // 3D Model
-            {".gltf", "📦"},    // 3D Model
-            {".png", "🖼️"},     // Image
-            {".jpg", "🖼️"},     // Image
-            {".jpeg", "🖼️"},    // Image
-            {".bmp", "🖼️"},     // Image
-            {".tga", "🖼️"},     // Image
-            {".txt", "📄"},     // Text
-            {".json", "⚙️"},    // Config
-            {".shader", "🔧"},  // Shader
-            {".glsl", "🔧"},    // Shader
-            {".hlsl", "🔧"},    // Shader
-            {".mtl", "🎨"},     // Material
-            {"folder", "📁"},   // Ordner
-            {"default", "📄"}   // Standard
-    };
-
-    std::string GetFileIcon(const std::filesystem::path& path);
-    std::string GetFileSizeString(const std::filesystem::path& path);
-
-    void DrawFileGrid(Scene& scene, const std::vector<std::filesystem::path>& folders,
-                      const std::vector<std::filesystem::path>& files,
-                      std::filesystem::path& renamingPath, char* renameBuffer, bool& startRename);
-
-    GLuint folderIcon = 0;
-    GLuint fileIcon = 0;
-    GLuint folderOpenIcon = 0;
-
-
     void LoadIcons();
 
+    // ImGui Zustand
+    bool viewportClicked = false;
+    bool viewportFocused = false;
+    bool viewportHoveredFrame = false;
+
+    // Icons (für Panels nutzbar via Freundschaft falls nötig)
+    GLuint folderIcon = 0;
+    GLuint fileIcon = 0;
+
+    // Panel-Verwaltung
+    std::vector<std::unique_ptr<IPanel>> panels;
+    SelectionState selectionState; // nutzt Definition aus PanelContext.hpp
     GLFWwindow* window;
     Window* windowObj;
 };
