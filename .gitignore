@@ -1,0 +1,96 @@
+# === Build Artefakte (CMake / CLion / Ninja / Make) ===
+cmake-build-*/
+build/
+[Bb]uild/
+CMakeFiles/
+CMakeCache.txt
+cmake_install.cmake
+Makefile
+install_manifest.txt
+compile_commands.json
+Testing/
+# Ninja
+*.ninja
+.ninja_deps
+.ninja_log
+
+# VS / MSVC Generator Reste
+/[Dd]ebug/
+/[Rr]elease/
+/x64/
+/.vs/
+*.vcxproj*
+*.sln
+
+# Objekt- & Link-Dateien
+*.o
+*.obj
+*.lo
+*.la
+*.a
+*.lib
+*.dll
+*.so
+*.dylib
+*.exe
+*.out
+*.app
+*.pdb
+*.exp
+*.ilk
+*.idb
+
+# Static / Runtime Caches
+.cache/
+.ipch/
+*.ipch
+*.pch
+
+# ImGui / Editor temporär
+imgui.ini
+
+# Logs & Profiler
+*.log
+*.trace
+*.json.trace
+
+# Crash / Dumps
+*.dmp
+*.stackdump
+core
+core.*
+
+# IDE Spezifisch
+.idea/
+.vscode/
+*.iml
+
+# Python / Scripting Reste (falls genutzt)
+__pycache__/
+*.pyc
+
+# System Dateien
+.DS_Store
+Thumbs.db
+Desktop.ini
+
+# FetchContent interne Zwischenschritte (nur innerhalb Build-Verzeichnissen)
+# Der externe Quellcode unter external/ soll behalten werden.
+*_deps/
+
+# Optional (auskommentieren, falls generiert und NICHT versioniert werden sollen)
+scene.bin
+level.bin
+style.txt
+
+# Shader Zwischencode (falls eigener Precompiler später genutzt wird)
+#shaders/*.spv
+
+# Benutzer-spezifische Konfiguration
+local.settings.json
+
+# Backup / Temp
+*.tmp
+*.bak
+*~
+
