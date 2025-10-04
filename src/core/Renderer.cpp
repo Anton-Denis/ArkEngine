@@ -9,6 +9,7 @@
 #include <sstream>
 #include <thread>
 #include <map>
+#include "../../include/core/MonitoringMetrics.hpp"
 
 Renderer::Renderer(Window& win, Scene& sc, std::shared_ptr<Shader> sh, Camera& cam, UI& ui, InputSystem* inputSys)
         : window(win), scene(sc), shader(sh), camera(cam), ui(ui), inputSystem(inputSys) {
@@ -118,47 +119,53 @@ void Renderer::SetMaterials() {
 void Renderer::SetLighting(Shader& shader) {
     int pointLightIdx = 0;
     int numPointLights = 0;
-    bool hasDirLight = false;
-
     std::vector<Light*> pointLights;
     Light* dirLight = nullptr;
+    // SpotLights
+    int spotLightIdx = 0;
+    std::vector<SpotLight*> spotLights;
 
     for (const auto& obj : scene.GetObjects()) {
         if (auto* light = dynamic_cast<Light*>(obj.get())) {
-            if (light->type == Light::Type::Point && pointLightIdx < 16) {
-                pointLights.push_back(light);
-                ++pointLightIdx;
-            } else if (light->type == Light::Type::Directional && !dirLight) {
-                dirLight = light;
+            switch (light->type) {
+                case Light::Type::Point:
+                    if (pointLightIdx < 32) { pointLights.push_back(light); ++pointLightIdx; }
+                    break;
+                case Light::Type::Directional:
+                    if (!dirLight) dirLight = light;
+                    break;
+                case Light::Type::Spot:
+                    if (spotLightIdx < 16) { spotLights.push_back(static_cast<SpotLight*>(light)); ++spotLightIdx; }
+                    break;
             }
         }
     }
     numPointLights = static_cast<int>(pointLights.size());
 
+    // Upload point lights
     for (int i = 0; i < numPointLights; ++i) {
-        auto* light = pointLights[i];
-        shader.SetVec3("pointLights[" + std::to_string(i) + "].position", light->GetPosition());
-        shader.SetVec3("pointLights[" + std::to_string(i) + "].ambient",  light->color * 0.1f);
-        shader.SetVec3("pointLights[" + std::to_string(i) + "].diffuse",  light->color * 0.8f);
-        shader.SetVec3("pointLights[" + std::to_string(i) + "].specular", light->color * 1.0f);
-        shader.SetFloat("pointLights[" + std::to_string(i) + "].constant",  light->constant);
-        shader.SetFloat("pointLights[" + std::to_string(i) + "].linear",    light->linear);
-        shader.SetFloat("pointLights[" + std::to_string(i) + "].quadratic", light->quadratic);
+        pointLights[i]->UploadToShader(&shader, i);
     }
     shader.SetInt("numPointLights", numPointLights);
 
+    // Directional light (ein einziger)
     if (dirLight) {
         shader.SetVec3("dirLight.direction", dirLight->direction);
         shader.SetVec3("dirLight.ambient",  dirLight->color * 0.1f);
         shader.SetVec3("dirLight.diffuse",  dirLight->color * 0.8f);
         shader.SetVec3("dirLight.specular", dirLight->color * 1.0f);
-        hasDirLight = true;
     } else {
-        shader.SetVec3("dirLight.direction", glm::vec3(0,0,0));
-        shader.SetVec3("dirLight.ambient",  glm::vec3(0,0,0));
-        shader.SetVec3("dirLight.diffuse",  glm::vec3(0,0,0));
-        shader.SetVec3("dirLight.specular", glm::vec3(0,0,0));
+        shader.SetVec3("dirLight.direction", glm::vec3(0));
+        shader.SetVec3("dirLight.ambient",  glm::vec3(0));
+        shader.SetVec3("dirLight.diffuse",  glm::vec3(0));
+        shader.SetVec3("dirLight.specular", glm::vec3(0));
     }
+
+    // SpotLights
+    for (int i = 0; i < (int)spotLights.size(); ++i) {
+        spotLights[i]->UploadToShader(&shader, i);
+    }
+    shader.SetInt("numSpotLights", (int)spotLights.size());
 }
 
 void Renderer::RenderMeshes() {
@@ -206,6 +213,10 @@ void Renderer::Render() {
 
     while (!window.ShouldClose()) {
         double frameStart = glfwGetTime();
+        MonitoringMetrics& mon = MonitoringMetrics::Instance();
+        mon.BeginFrameCpu();
+        mon.BeginFrameGpu();
+
         deltaTime = frameStart - lastFrameTime;
         lastFrameTime = frameStart;
         UpdateFPS();
@@ -272,11 +283,17 @@ void Renderer::Render() {
 
         ui.DrawAxisGizmo(camera.GetViewMatrix(), rect.pos, rect.size);
         ui.Draw(cachedMeshes, scene);
+        // GPU Ende vor ImGui Render (Render bereits passiert)
+        mon.EndFrameGpu();
         ui.EndFrame();
 
         window.SwapBuffers();
         window.PollEvents();
         inputSystem->LateUpdate();
+
+        mon.EndFrameCpu(deltaTime); // frameTimeSeconds
+        mon.UpdateProcessCpu();
+        mon.UpdateMemory();
 
         LimitFPS(frameStart, 300.0);
     }

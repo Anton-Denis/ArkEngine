@@ -18,6 +18,7 @@
 #include "UI.hpp"
 #include "../objects/Grid.hpp"
 #include "InputSystem.hpp"
+#include "../objects/SpotLight.hpp"
 
 class Renderer {
 public:

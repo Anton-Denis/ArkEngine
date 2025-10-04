@@ -109,6 +109,14 @@ add_executable(3DRenderer
         src/objects/Model.cpp
         src/core/ProjectManager.cpp
         src/objects/Grid.cpp
+        src/core/ui/MenuBarPanel.cpp
+        src/core/ui/SceneHierarchyPanel.cpp
+        src/core/ui/InspectorPanel.cpp
+        src/core/ui/AssetBrowserPanel.cpp
+        src/core/ui/StyleEditorPanel.cpp
+        src/core/ui/PanelContext.cpp
+        src/core/MonitoringMetrics.cpp
+        src/core/ui/MonitoringPanel.cpp
 )
 
 # Include directories
@@ -131,6 +139,10 @@ target_link_libraries(3DRenderer
         assimp
         nlohmann_json::nlohmann_json
 )
+
+if (WIN32)
+    target_link_libraries(3DRenderer Psapi)
+endif()
 
 find_package(OpenGL REQUIRED)
 target_link_libraries(3DRenderer ${OPENGL_gl_LIBRARY})

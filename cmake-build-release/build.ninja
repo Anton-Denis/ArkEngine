@@ -317,6 +317,62 @@ build CMakeFiles/3DRenderer.dir/src/objects/Grid.cpp.obj: CXX_COMPILER__3DRender
   OBJECT_DIR = CMakeFiles\3DRenderer.dir
   OBJECT_FILE_DIR = CMakeFiles\3DRenderer.dir\src\objects
 
+build CMakeFiles/3DRenderer.dir/src/core/ui/MenuBarPanel.cpp.obj: CXX_COMPILER__3DRenderer_unscanned_Release C$:/Users/anton/CLionProjects/3DRenderer/src/core/ui/MenuBarPanel.cpp || cmake_object_order_depends_target_3DRenderer
+  DEP_FILE = CMakeFiles\3DRenderer.dir\src\core\ui\MenuBarPanel.cpp.obj.d
+  FLAGS = -O3 -DNDEBUG -std=gnu++20 -fdiagnostics-color=always
+  INCLUDES = -IC:/Users/anton/CLionProjects/3DRenderer/cmake-build-release/_deps/glfw-src/include -IC:/Users/anton/CLionProjects/3DRenderer/cmake-build-release/_deps/glm-src -IC:/Users/anton/CLionProjects/3DRenderer/cmake-build-release/_deps/stb-src -IC:/Users/anton/CLionProjects/3DRenderer/cmake-build-release/_deps/assimp-src/include -IC:/Users/anton/CLionProjects/3DRenderer/external/glad/include -IC:/Users/anton/CLionProjects/3DRenderer/cmake-build-release/_deps/glm-src/glm/.. -IC:/Users/anton/CLionProjects/3DRenderer/external/image/include/stb_image.h -IC:/Users/anton/CLionProjects/3DRenderer/external/imgui -IC:/Users/anton/CLionProjects/3DRenderer/external/imgui/backends -IC:/Users/anton/CLionProjects/3DRenderer/cmake-build-release/_deps/imguifiledialog-src -IC:/Users/anton/CLionProjects/3DRenderer/cmake-build-release/_deps/nlohmann_json-src/include
+  OBJECT_DIR = CMakeFiles\3DRenderer.dir
+  OBJECT_FILE_DIR = CMakeFiles\3DRenderer.dir\src\core\ui
+
+build CMakeFiles/3DRenderer.dir/src/core/ui/SceneHierarchyPanel.cpp.obj: CXX_COMPILER__3DRenderer_unscanned_Release C$:/Users/anton/CLionProjects/3DRenderer/src/core/ui/SceneHierarchyPanel.cpp || cmake_object_order_depends_target_3DRenderer
+  DEP_FILE = CMakeFiles\3DRenderer.dir\src\core\ui\SceneHierarchyPanel.cpp.obj.d
+  FLAGS = -O3 -DNDEBUG -std=gnu++20 -fdiagnostics-color=always
+  INCLUDES = -IC:/Users/anton/CLionProjects/3DRenderer/cmake-build-release/_deps/glfw-src/include -IC:/Users/anton/CLionProjects/3DRenderer/cmake-build-release/_deps/glm-src -IC:/Users/anton/CLionProjects/3DRenderer/cmake-build-release/_deps/stb-src -IC:/Users/anton/CLionProjects/3DRenderer/cmake-build-release/_deps/assimp-src/include -IC:/Users/anton/CLionProjects/3DRenderer/external/glad/include -IC:/Users/anton/CLionProjects/3DRenderer/cmake-build-release/_deps/glm-src/glm/.. -IC:/Users/anton/CLionProjects/3DRenderer/external/image/include/stb_image.h -IC:/Users/anton/CLionProjects/3DRenderer/external/imgui -IC:/Users/anton/CLionProjects/3DRenderer/external/imgui/backends -IC:/Users/anton/CLionProjects/3DRenderer/cmake-build-release/_deps/imguifiledialog-src -IC:/Users/anton/CLionProjects/3DRenderer/cmake-build-release/_deps/nlohmann_json-src/include
+  OBJECT_DIR = CMakeFiles\3DRenderer.dir
+  OBJECT_FILE_DIR = CMakeFiles\3DRenderer.dir\src\core\ui
+
+build CMakeFiles/3DRenderer.dir/src/core/ui/InspectorPanel.cpp.obj: CXX_COMPILER__3DRenderer_unscanned_Release C$:/Users/anton/CLionProjects/3DRenderer/src/core/ui/InspectorPanel.cpp || cmake_object_order_depends_target_3DRenderer
+  DEP_FILE = CMakeFiles\3DRenderer.dir\src\core\ui\InspectorPanel.cpp.obj.d
+  FLAGS = -O3 -DNDEBUG -std=gnu++20 -fdiagnostics-color=always
+  INCLUDES = -IC:/Users/anton/CLionProjects/3DRenderer/cmake-build-release/_deps/glfw-src/include -IC:/Users/anton/CLionProjects/3DRenderer/cmake-build-release/_deps/glm-src -IC:/Users/anton/CLionProjects/3DRenderer/cmake-build-release/_deps/stb-src -IC:/Users/anton/CLionProjects/3DRenderer/cmake-build-release/_deps/assimp-src/include -IC:/Users/anton/CLionProjects/3DRenderer/external/glad/include -IC:/Users/anton/CLionProjects/3DRenderer/cmake-build-release/_deps/glm-src/glm/.. -IC:/Users/anton/CLionProjects/3DRenderer/external/image/include/stb_image.h -IC:/Users/anton/CLionProjects/3DRenderer/external/imgui -IC:/Users/anton/CLionProjects/3DRenderer/external/imgui/backends -IC:/Users/anton/CLionProjects/3DRenderer/cmake-build-release/_deps/imguifiledialog-src -IC:/Users/anton/CLionProjects/3DRenderer/cmake-build-release/_deps/nlohmann_json-src/include
+  OBJECT_DIR = CMakeFiles\3DRenderer.dir
+  OBJECT_FILE_DIR = CMakeFiles\3DRenderer.dir\src\core\ui
+
+build CMakeFiles/3DRenderer.dir/src/core/ui/AssetBrowserPanel.cpp.obj: CXX_COMPILER__3DRenderer_unscanned_Release C$:/Users/anton/CLionProjects/3DRenderer/src/core/ui/AssetBrowserPanel.cpp || cmake_object_order_depends_target_3DRenderer
+  DEP_FILE = CMakeFiles\3DRenderer.dir\src\core\ui\AssetBrowserPanel.cpp.obj.d
+  FLAGS = -O3 -DNDEBUG -std=gnu++20 -fdiagnostics-color=always
+  INCLUDES = -IC:/Users/anton/CLionProjects/3DRenderer/cmake-build-release/_deps/glfw-src/include -IC:/Users/anton/CLionProjects/3DRenderer/cmake-build-release/_deps/glm-src -IC:/Users/anton/CLionProjects/3DRenderer/cmake-build-release/_deps/stb-src -IC:/Users/anton/CLionProjects/3DRenderer/cmake-build-release/_deps/assimp-src/include -IC:/Users/anton/CLionProjects/3DRenderer/external/glad/include -IC:/Users/anton/CLionProjects/3DRenderer/cmake-build-release/_deps/glm-src/glm/.. -IC:/Users/anton/CLionProjects/3DRenderer/external/image/include/stb_image.h -IC:/Users/anton/CLionProjects/3DRenderer/external/imgui -IC:/Users/anton/CLionProjects/3DRenderer/external/imgui/backends -IC:/Users/anton/CLionProjects/3DRenderer/cmake-build-release/_deps/imguifiledialog-src -IC:/Users/anton/CLionProjects/3DRenderer/cmake-build-release/_deps/nlohmann_json-src/include
+  OBJECT_DIR = CMakeFiles\3DRenderer.dir
+  OBJECT_FILE_DIR = CMakeFiles\3DRenderer.dir\src\core\ui
+
+build CMakeFiles/3DRenderer.dir/src/core/ui/StyleEditorPanel.cpp.obj: CXX_COMPILER__3DRenderer_unscanned_Release C$:/Users/anton/CLionProjects/3DRenderer/src/core/ui/StyleEditorPanel.cpp || cmake_object_order_depends_target_3DRenderer
+  DEP_FILE = CMakeFiles\3DRenderer.dir\src\core\ui\StyleEditorPanel.cpp.obj.d
+  FLAGS = -O3 -DNDEBUG -std=gnu++20 -fdiagnostics-color=always
+  INCLUDES = -IC:/Users/anton/CLionProjects/3DRenderer/cmake-build-release/_deps/glfw-src/include -IC:/Users/anton/CLionProjects/3DRenderer/cmake-build-release/_deps/glm-src -IC:/Users/anton/CLionProjects/3DRenderer/cmake-build-release/_deps/stb-src -IC:/Users/anton/CLionProjects/3DRenderer/cmake-build-release/_deps/assimp-src/include -IC:/Users/anton/CLionProjects/3DRenderer/external/glad/include -IC:/Users/anton/CLionProjects/3DRenderer/cmake-build-release/_deps/glm-src/glm/.. -IC:/Users/anton/CLionProjects/3DRenderer/external/image/include/stb_image.h -IC:/Users/anton/CLionProjects/3DRenderer/external/imgui -IC:/Users/anton/CLionProjects/3DRenderer/external/imgui/backends -IC:/Users/anton/CLionProjects/3DRenderer/cmake-build-release/_deps/imguifiledialog-src -IC:/Users/anton/CLionProjects/3DRenderer/cmake-build-release/_deps/nlohmann_json-src/include
+  OBJECT_DIR = CMakeFiles\3DRenderer.dir
+  OBJECT_FILE_DIR = CMakeFiles\3DRenderer.dir\src\core\ui
+
+build CMakeFiles/3DRenderer.dir/src/core/ui/PanelContext.cpp.obj: CXX_COMPILER__3DRenderer_unscanned_Release C$:/Users/anton/CLionProjects/3DRenderer/src/core/ui/PanelContext.cpp || cmake_object_order_depends_target_3DRenderer
+  DEP_FILE = CMakeFiles\3DRenderer.dir\src\core\ui\PanelContext.cpp.obj.d
+  FLAGS = -O3 -DNDEBUG -std=gnu++20 -fdiagnostics-color=always
+  INCLUDES = -IC:/Users/anton/CLionProjects/3DRenderer/cmake-build-release/_deps/glfw-src/include -IC:/Users/anton/CLionProjects/3DRenderer/cmake-build-release/_deps/glm-src -IC:/Users/anton/CLionProjects/3DRenderer/cmake-build-release/_deps/stb-src -IC:/Users/anton/CLionProjects/3DRenderer/cmake-build-release/_deps/assimp-src/include -IC:/Users/anton/CLionProjects/3DRenderer/external/glad/include -IC:/Users/anton/CLionProjects/3DRenderer/cmake-build-release/_deps/glm-src/glm/.. -IC:/Users/anton/CLionProjects/3DRenderer/external/image/include/stb_image.h -IC:/Users/anton/CLionProjects/3DRenderer/external/imgui -IC:/Users/anton/CLionProjects/3DRenderer/external/imgui/backends -IC:/Users/anton/CLionProjects/3DRenderer/cmake-build-release/_deps/imguifiledialog-src -IC:/Users/anton/CLionProjects/3DRenderer/cmake-build-release/_deps/nlohmann_json-src/include
+  OBJECT_DIR = CMakeFiles\3DRenderer.dir
+  OBJECT_FILE_DIR = CMakeFiles\3DRenderer.dir\src\core\ui
+
+build CMakeFiles/3DRenderer.dir/src/core/MonitoringMetrics.cpp.obj: CXX_COMPILER__3DRenderer_unscanned_Release C$:/Users/anton/CLionProjects/3DRenderer/src/core/MonitoringMetrics.cpp || cmake_object_order_depends_target_3DRenderer
+  DEP_FILE = CMakeFiles\3DRenderer.dir\src\core\MonitoringMetrics.cpp.obj.d
+  FLAGS = -O3 -DNDEBUG -std=gnu++20 -fdiagnostics-color=always
+  INCLUDES = -IC:/Users/anton/CLionProjects/3DRenderer/cmake-build-release/_deps/glfw-src/include -IC:/Users/anton/CLionProjects/3DRenderer/cmake-build-release/_deps/glm-src -IC:/Users/anton/CLionProjects/3DRenderer/cmake-build-release/_deps/stb-src -IC:/Users/anton/CLionProjects/3DRenderer/cmake-build-release/_deps/assimp-src/include -IC:/Users/anton/CLionProjects/3DRenderer/external/glad/include -IC:/Users/anton/CLionProjects/3DRenderer/cmake-build-release/_deps/glm-src/glm/.. -IC:/Users/anton/CLionProjects/3DRenderer/external/image/include/stb_image.h -IC:/Users/anton/CLionProjects/3DRenderer/external/imgui -IC:/Users/anton/CLionProjects/3DRenderer/external/imgui/backends -IC:/Users/anton/CLionProjects/3DRenderer/cmake-build-release/_deps/imguifiledialog-src -IC:/Users/anton/CLionProjects/3DRenderer/cmake-build-release/_deps/nlohmann_json-src/include
+  OBJECT_DIR = CMakeFiles\3DRenderer.dir
+  OBJECT_FILE_DIR = CMakeFiles\3DRenderer.dir\src\core
+
+build CMakeFiles/3DRenderer.dir/src/core/ui/MonitoringPanel.cpp.obj: CXX_COMPILER__3DRenderer_unscanned_Release C$:/Users/anton/CLionProjects/3DRenderer/src/core/ui/MonitoringPanel.cpp || cmake_object_order_depends_target_3DRenderer
+  DEP_FILE = CMakeFiles\3DRenderer.dir\src\core\ui\MonitoringPanel.cpp.obj.d
+  FLAGS = -O3 -DNDEBUG -std=gnu++20 -fdiagnostics-color=always
+  INCLUDES = -IC:/Users/anton/CLionProjects/3DRenderer/cmake-build-release/_deps/glfw-src/include -IC:/Users/anton/CLionProjects/3DRenderer/cmake-build-release/_deps/glm-src -IC:/Users/anton/CLionProjects/3DRenderer/cmake-build-release/_deps/stb-src -IC:/Users/anton/CLionProjects/3DRenderer/cmake-build-release/_deps/assimp-src/include -IC:/Users/anton/CLionProjects/3DRenderer/external/glad/include -IC:/Users/anton/CLionProjects/3DRenderer/cmake-build-release/_deps/glm-src/glm/.. -IC:/Users/anton/CLionProjects/3DRenderer/external/image/include/stb_image.h -IC:/Users/anton/CLionProjects/3DRenderer/external/imgui -IC:/Users/anton/CLionProjects/3DRenderer/external/imgui/backends -IC:/Users/anton/CLionProjects/3DRenderer/cmake-build-release/_deps/imguifiledialog-src -IC:/Users/anton/CLionProjects/3DRenderer/cmake-build-release/_deps/nlohmann_json-src/include
+  OBJECT_DIR = CMakeFiles\3DRenderer.dir
+  OBJECT_FILE_DIR = CMakeFiles\3DRenderer.dir\src\core\ui
+
 
 # =============================================================================
 # Link build statements for EXECUTABLE target 3DRenderer
@@ -325,9 +381,9 @@ build CMakeFiles/3DRenderer.dir/src/objects/Grid.cpp.obj: CXX_COMPILER__3DRender
 #############################################
 # Link the executable 3DRenderer.exe
 
-build 3DRenderer.exe: CXX_EXECUTABLE_LINKER__3DRenderer_Release CMakeFiles/3DRenderer.dir/src/main.cpp.obj CMakeFiles/3DRenderer.dir/src/core/Window.cpp.obj CMakeFiles/3DRenderer.dir/src/core/Shader.cpp.obj CMakeFiles/3DRenderer.dir/src/core/Scene.cpp.obj CMakeFiles/3DRenderer.dir/src/core/Renderer.cpp.obj CMakeFiles/3DRenderer.dir/src/core/Camera.cpp.obj CMakeFiles/3DRenderer.dir/src/core/UI.cpp.obj CMakeFiles/3DRenderer.dir/src/core/ResourceManager.cpp.obj CMakeFiles/3DRenderer.dir/src/core/ArkEngine.cpp.obj CMakeFiles/3DRenderer.dir/src/core/InputSystem.cpp.obj CMakeFiles/3DRenderer.dir/src/objects/Mesh.cpp.obj CMakeFiles/3DRenderer.dir/src/objects/Model.cpp.obj CMakeFiles/3DRenderer.dir/src/core/ProjectManager.cpp.obj CMakeFiles/3DRenderer.dir/src/objects/Grid.cpp.obj | _deps/glfw-build/src/libglfw3.a libglad.a libstb_image.a libimgui.a libimguifiledialog.a _deps/assimp-build/code/libassimp.a libimgui.a _deps/assimp-build/contrib/zlib/libzlibstatic.a || _deps/assimp-build/code/libassimp.a _deps/assimp-build/contrib/zlib/libzlibstatic.a _deps/glfw-build/src/libglfw3.a libglad.a libimgui.a libimguifiledialog.a libstb_image.a
+build 3DRenderer.exe: CXX_EXECUTABLE_LINKER__3DRenderer_Release CMakeFiles/3DRenderer.dir/src/main.cpp.obj CMakeFiles/3DRenderer.dir/src/core/Window.cpp.obj CMakeFiles/3DRenderer.dir/src/core/Shader.cpp.obj CMakeFiles/3DRenderer.dir/src/core/Scene.cpp.obj CMakeFiles/3DRenderer.dir/src/core/Renderer.cpp.obj CMakeFiles/3DRenderer.dir/src/core/Camera.cpp.obj CMakeFiles/3DRenderer.dir/src/core/UI.cpp.obj CMakeFiles/3DRenderer.dir/src/core/ResourceManager.cpp.obj CMakeFiles/3DRenderer.dir/src/core/ArkEngine.cpp.obj CMakeFiles/3DRenderer.dir/src/core/InputSystem.cpp.obj CMakeFiles/3DRenderer.dir/src/objects/Mesh.cpp.obj CMakeFiles/3DRenderer.dir/src/objects/Model.cpp.obj CMakeFiles/3DRenderer.dir/src/core/ProjectManager.cpp.obj CMakeFiles/3DRenderer.dir/src/objects/Grid.cpp.obj CMakeFiles/3DRenderer.dir/src/core/ui/MenuBarPanel.cpp.obj CMakeFiles/3DRenderer.dir/src/core/ui/SceneHierarchyPanel.cpp.obj CMakeFiles/3DRenderer.dir/src/core/ui/InspectorPanel.cpp.obj CMakeFiles/3DRenderer.dir/src/core/ui/AssetBrowserPanel.cpp.obj CMakeFiles/3DRenderer.dir/src/core/ui/StyleEditorPanel.cpp.obj CMakeFiles/3DRenderer.dir/src/core/ui/PanelContext.cpp.obj CMakeFiles/3DRenderer.dir/src/core/MonitoringMetrics.cpp.obj CMakeFiles/3DRenderer.dir/src/core/ui/MonitoringPanel.cpp.obj | _deps/glfw-build/src/libglfw3.a libglad.a libstb_image.a libimgui.a libimguifiledialog.a _deps/assimp-build/code/libassimp.a libimgui.a _deps/assimp-build/contrib/zlib/libzlibstatic.a || _deps/assimp-build/code/libassimp.a _deps/assimp-build/contrib/zlib/libzlibstatic.a _deps/glfw-build/src/libglfw3.a libglad.a libimgui.a libimguifiledialog.a libstb_image.a
   FLAGS = -O3 -DNDEBUG
-  LINK_LIBRARIES = _deps/glfw-build/src/libglfw3.a  libglad.a  libstb_image.a  -lopengl32  libimgui.a  libimguifiledialog.a  _deps/assimp-build/code/libassimp.a  -lopengl32  libimgui.a  _deps/assimp-build/contrib/zlib/libzlibstatic.a  -lkernel32 -luser32 -lgdi32 -lwinspool -lshell32 -lole32 -loleaut32 -luuid -lcomdlg32 -ladvapi32
+  LINK_LIBRARIES = _deps/glfw-build/src/libglfw3.a  libglad.a  libstb_image.a  -lopengl32  libimgui.a  libimguifiledialog.a  _deps/assimp-build/code/libassimp.a  -lPsapi  -lopengl32  -lPsapi  libimgui.a  _deps/assimp-build/contrib/zlib/libzlibstatic.a  -lkernel32 -luser32 -lgdi32 -lwinspool -lshell32 -lole32 -loleaut32 -luuid -lcomdlg32 -ladvapi32
   OBJECT_DIR = CMakeFiles\3DRenderer.dir
   POST_BUILD = cd .
   PRE_LINK = cd .
