@@ -1,5 +1,6 @@
 # === Build Artefakte (CMake / CLion / Ninja / Make) ===
 cmake-build-*/
+cmake-build-release/
 build/
 [Bb]uild/
 CMakeFiles/
@@ -82,6 +83,9 @@ Desktop.ini
 scene.bin
 level.bin
 style.txt
+
+FIX_VERIFICATION_REPORT.md
+INPUT_SYSTEM_DOCUMENTATION.md
 
 # Shader Zwischencode (falls eigener Precompiler später genutzt wird)
 #shaders/*.spv
