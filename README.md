@@ -2,7 +2,7 @@
 
 A compact C++20/OpenGL game engine prototype with an immediate-mode editor UI powered by Dear ImGui. The goal is to provide a clean, modular foundation for experimentation with rendering, scene management, and tooling while keeping dependencies lightweight.
 
-![App Screenshot](screenshots/Screenshot 2026-02-18 030030.png)
+![App Screenshot](../sceenshots/screenshot1.png)
 
 ## Highlights
 - Rendering: Phong lighting with Point, Directional, and Spot lights
@@ -79,3 +79,4 @@ Debug build:
 
 ## License
 Internal use. External libraries follow their respective licenses.
+
