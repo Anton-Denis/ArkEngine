@@ -2,7 +2,7 @@
 
 A compact C++20/OpenGL game engine prototype with an immediate-mode editor UI powered by Dear ImGui. The goal is to provide a clean, modular foundation for experimentation with rendering, scene management, and tooling while keeping dependencies lightweight.
 
-![App Screenshot](../sceenshots/screenshot1.png)
+![image alt](https://github.com/Anton-Denis/ArkEngine/blob/main/screenshots/screenshot1.png?raw=true)
 
 ## Highlights
 - Rendering: Phong lighting with Point, Directional, and Spot lights
@@ -79,4 +79,5 @@ Debug build:
 
 ## License
 Internal use. External libraries follow their respective licenses.
+
 
